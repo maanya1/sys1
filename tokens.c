@@ -9,8 +9,11 @@
 
 TokenNode* create_token_node(char* token) {
   TokenNode* new_token_node = malloc(sizeof(TokenNode));
+
+  new_token_node->frequency = 1;
   new_token_node->token = strdup(token);
   new_token_node->next = NULL;
+  
   return new_token_node;
 }
 
@@ -20,6 +23,21 @@ TokenNode* append_node(TokenNode* head, TokenNode* node) {
   if (node == NULL) return head;
 
   head->next = append_node(head->next, node);
+
+  return head;
+}
+
+// append token node to token without duplicates
+TokenNode* append_node_distinct(TokenNode* head, TokenNode* node) {
+  if (head == NULL) return node;
+  if (node == NULL) return head;
+
+  if (strcmp(head->token, node->token) == 0) {
+    head->frequency++;
+    return head;
+  }
+
+  head->next = append_node_distinct(head->next, node);
 
   return head;
 }
@@ -40,7 +58,7 @@ char* list_to_string(TokenNode* list) {
   TokenNode* curr = list;
   int str_index = 0;
 
- // iterate through and add to string
+  // iterate through and add to string
   while(curr != NULL) {
     string[str_index] = curr->token[0];
 
@@ -57,44 +75,55 @@ void print_tokens(TokenNode* head) {
   TokenNode* curr = head;
 
   while (curr != NULL) {
-    printf("token: %s\n", curr->token);
+    printf("token: '%s', frequency: %d\n", curr->token, curr->frequency);
     curr = curr->next;
   }
 }
 
 TokenNode* file_to_list(char* filename) {
-  int file_descriptor = open(filename, O_RDONLY);
+  int fd = open(filename, O_RDONLY);
 
-  if (file_descriptor < 0) {
+  if (fd < 0) {
     printf("could not open file\n");
     return NULL;
   }
 
-  TokenNode* tokens = NULL;
-  TokenNode* mini_tokens = NULL;
+  TokenNode* all_tokens = NULL;
+  TokenNode* non_space_tokens = NULL;
 
-  int bytes_read = 0;
+  int bytes_read;
+  char* token = malloc(sizeof(char));
 
-  do {
-    char* buffer = malloc(sizeof(char) + 1);
-    buffer[1] = '\0';
+  while((bytes_read = read(fd, token, 1)) > 0)  {
+    char token_char = *token;
 
-    bytes_read = read(file_descriptor, buffer, 1);
+    if (isspace(token_char)) {
+        // If there are non-space characters, add them.
+        if (non_space_tokens != NULL) {
+          char* non_space_str = list_to_string(non_space_tokens);
 
-    if (bytes_read > 0) {
-      if (isspace(*buffer)) {
-        // printf("dis is a space: %s\n", buffer);
+          all_tokens = append_node_distinct(
+              all_tokens, create_token_node(non_space_str)
+          );
+          non_space_tokens = NULL; // Reset non-space list.
+        } 
 
-        TokenNode* word_node = create_token_node( list_to_string(mini_tokens));
-        tokens = append_node(tokens, word_node);
-        mini_tokens = NULL;
-
-      } else {
-        mini_tokens = append_node(mini_tokens, create_token_node(buffer));
-        // printf("dis some text: %s\n", buffer);
-      }
+        // Add the space.
+        all_tokens = append_node_distinct(all_tokens, create_token_node(buffer));
+    } else {
+      // Add non-space characters.
+      non_space_tokens = append_node(non_space_tokens, create_token_node(token));
     }
-  } while(bytes_read > 0);
+  }
 
-  return tokens;
+  // Add leftover non-whitespace characters 
+  if (non_space_tokens != NULL) {
+    char* non_space_str = list_to_string(non_space_tokens);
+
+    all_tokens = append_node_distinct(
+        all_tokens, create_token_node(non_space_str)
+    );
+  }
+
+  return all_tokens;
 }

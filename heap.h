@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<string.h>
 
-
 typedef struct HeapNode {
     int frequency;
     char* word;
@@ -12,7 +11,7 @@ typedef struct HeapNode {
 } HeapNode;
 
 typedef struct Heap{
-    int *arr;
+    HeapNode *arr;
     int count;
     int capacity;
 } Heap;
@@ -20,7 +19,3 @@ typedef struct Heap{
 Heap *CreateHeap(int capacity,int heap_type);
 HeapNode* create_heap_node(int frequency, char* word);
 void insert(Heap *h, int key);
-
-
-
-
