@@ -7,28 +7,52 @@
 #include "flags.h"
 #include "tokens.h"
 
-TokenNode* create_token_node(char* token) {
-  TokenNode* new_token_node = malloc(sizeof(TokenNode));
+// `create` - creates a new token node
+Token* Token_create(char* token) {
+  Token* node = malloc(sizeof(Token));
 
-  new_token_node->frequency = 1;
-  new_token_node->token = strdup(token);
-  new_token_node->next = NULL;
+  node->frequency = 1;
+  node->token = strdup(token);
+  node->next = NULL;
   
-  return new_token_node;
+  return node;
 }
 
-// append token node to token node list
-TokenNode* append_node(TokenNode* head, TokenNode* node) {
+Token* Token_create_frequency(char* token, int frequency) {
+  Token* node = malloc(sizeof(Token));
+
+  node->frequency = frequency;
+  node->token = strdup(token);
+  node->next = NULL;
+  
+  return node;
+}
+
+// `append` - appends a node to a token linked list
+Token* Token_append(Token* head, Token* node) {
   if (head == NULL) return node;
   if (node == NULL) return head;
 
-  head->next = append_node(head->next, node);
+  head->next = Token_append(head->next, node);
 
   return head;
 }
 
-// append token node to token without duplicates
-TokenNode* append_node_distinct(TokenNode* head, TokenNode* node) {
+// `merge` - merges two token linked lists distinctly
+Token* Token_merge(Token* list_a, Token* list_b) {
+  while (list_b != NULL) {
+    Token* next = list_b->next;
+    list_b->next = NULL;
+
+    list_a = Token_append_distinct(list_a, list_b);
+    list_b = next;
+  }
+
+  return list_a;
+}
+
+// `append_distinct` - appends a node to a token linked list distinctly
+Token* Token_append_distinct(Token* head, Token* node) {
   if (head == NULL) return node;
   if (node == NULL) return head;
 
@@ -37,50 +61,44 @@ TokenNode* append_node_distinct(TokenNode* head, TokenNode* node) {
     return head;
   }
 
-  head->next = append_node_distinct(head->next, node);
-
+  head->next = Token_append_distinct(head->next, node);
   return head;
 }
 
-int list_length(TokenNode* list) {
+// `length` - gets the length of a token linked list
+int Token_length(Token* list) {
   if (list == NULL) return 0;
-  return 1 + list_length(list->next);
+  return 1 + Token_length(list->next);
 }
 
-// converts a list of characters to a string
-char* list_to_string(TokenNode* list) {
-  // length of the list
-  int str_length = list_length(list);
-  // make a string as the length of the list (+ 1 for the null char at the end)
-  char* string = malloc(sizeof(char) * str_length + 1);
+// `to_string` - converts a token linked list to a string
+char* Token_to_string(Token* head) {
+  char* str = malloc(sizeof(char) * Token_length(head) + 1);
 
- // pointer to front of string and curr string index
-  TokenNode* curr = list;
-  int str_index = 0;
+  // Iterate through and add to string.
+  int index = 0;
+  while(head != NULL) {  
+    str[index] = head->token[0];
 
-  // iterate through and add to string
-  while(curr != NULL) {
-    string[str_index] = curr->token[0];
-
-    curr = curr->next;
-    str_index++;
+    head = head->next;
+    index++;
   }
 
-  string[str_index] = '\0';
-
-  return string;
+  str[index] = '\0';
+  return str;
 }
 
-void print_tokens(TokenNode* head) {
-  TokenNode* curr = head;
+// `print` - prints a token linked list
+void Token_print(Token* node) {
+  if (node == NULL) return;
 
-  while (curr != NULL) {
-    printf("token: '%s', frequency: %d\n", curr->token, curr->frequency);
-    curr = curr->next;
-  }
+  printf("token: '%s', frequency: %d\n", node->token, node->frequency);
+
+  Token_print(node->next);
 }
 
-TokenNode* file_to_list(char* filename) {
+// `read_file` - reads a file into a list
+Token* Token_read_file(char* filename) {
   int fd = open(filename, O_RDONLY);
 
   if (fd < 0) {
@@ -88,42 +106,43 @@ TokenNode* file_to_list(char* filename) {
     return NULL;
   }
 
-  TokenNode* all_tokens = NULL;
-  TokenNode* non_space_tokens = NULL;
+  Token* all_tokens = NULL;
+  Token* non_space_tokens = NULL;
+
+  char* token = malloc(sizeof(char) + 1);
+  token[1] = '\0';
 
   int bytes_read;
-  char* token = malloc(sizeof(char));
-
   while((bytes_read = read(fd, token, 1)) > 0)  {
     char token_char = *token;
 
     if (isspace(token_char)) {
         // If there are non-space characters, add them.
         if (non_space_tokens != NULL) {
-          char* non_space_str = list_to_string(non_space_tokens);
-
-          all_tokens = append_node_distinct(
-              all_tokens, create_token_node(non_space_str)
-          );
+          char* non_space_str = Token_to_string(non_space_tokens);
+          all_tokens = Token_append(all_tokens, Token_create(non_space_str));
           non_space_tokens = NULL; // Reset non-space list.
         } 
 
         // Add the space.
-        all_tokens = append_node_distinct(all_tokens, create_token_node(buffer));
+        all_tokens = Token_append(all_tokens, Token_create(token));
     } else {
       // Add non-space characters.
-      non_space_tokens = append_node(non_space_tokens, create_token_node(token));
+      non_space_tokens = Token_append(non_space_tokens, Token_create(token));
     }
   }
 
-  // Add leftover non-whitespace characters 
+  // Add leftover non-space characters.
   if (non_space_tokens != NULL) {
-    char* non_space_str = list_to_string(non_space_tokens);
-
-    all_tokens = append_node_distinct(
-        all_tokens, create_token_node(non_space_str)
-    );
+    char* non_space_str = Token_to_string(non_space_tokens);
+    all_tokens = Token_append(all_tokens, Token_create(non_space_str));
   }
 
   return all_tokens;
+}
+
+// `read_file` - reads a file into a list distinctly
+Token* Token_read_file_distinct(char* filename) {
+  Token* tokens = Token_read_file(filename);
+  return Token_merge(NULL, tokens);
 }

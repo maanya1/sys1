@@ -1,21 +1,23 @@
 #ifndef TOKENS_H
 #define TOKENS_H
 
-
-typedef struct TokenNode {
+typedef struct Token {
   char* token;
   int frequency;
-  struct TokenNode* next;
-} TokenNode;
+  struct Token* next;
+} Token;
 
-TokenNode* create_token_node(char* token);
-TokenNode* append_node(TokenNode* head, TokenNode* node);
-TokenNode* append_node_distinct(TokenNode* head, TokenNode* node);
+Token* Token_create(char* token);
+Token* Token_create_frequency(char* token, int frequency);
+Token* Token_append(Token* head, Token* node);
+Token* Token_append_distinct(Token* head, Token* node);
+Token* Token_merge(Token* list_a, Token* list_b);
 
-int list_length(TokenNode* list);
-char* list_to_string(TokenNode* list);
-void print_tokens(TokenNode* head);
+int Token_length(Token* list);
+char* Token_to_string(Token* list);
+void Token_print(Token* head);
 
-TokenNode* file_to_list(char* filename);
+Token* Token_read_file(char* filename);
+Token* Token_read_file_distinct(char* filename);
 
 #endif

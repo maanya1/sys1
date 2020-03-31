@@ -1,21 +1,26 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "tokens.h"
 
-typedef struct HeapNode {
+typedef struct TreeNode {
     int frequency;
     char* word;
 
-    struct HeapNode* left;
-    struct HeapNode* right;;
-} HeapNode;
+    struct TreeNode* left;
+    struct TreeNode* right;
+} TreeNode;
 
 typedef struct Heap{
-    HeapNode *arr;
+    TreeNode **arr;
     int count;
     int capacity;
 } Heap;
 
-Heap *CreateHeap(int capacity,int heap_type);
-HeapNode* create_heap_node(int frequency, char* word);
-void insert(Heap *h, int key);
+Heap *CreateHeap(int capacity);
+TreeNode* create_heap_node(int frequency, char* word);
+void insert(Heap *h, Token* key);
+void siftUp(Heap *h, int i);
+TreeNode* removeMin(Heap *h);
+void swap(TreeNode **a, TreeNode **b);
+void printHeap(Heap *h);

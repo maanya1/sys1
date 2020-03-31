@@ -39,15 +39,59 @@ void listFilesRecursive(char *basePath, void (*some_function)(char*)) {
   closedir(dir);
 }
 
-
 void compress(char* pathname) {
-  printf("compressing %s...\n", pathname);
+  printf("compressing %s\n", pathname);
+  
 }
+
 void decompress(char* pathname) {
-  printf("decompressing %s...\n", pathname);
+  printf("decompressing %s\n", pathname);
 }
+
+
+/*
+
+BUILD CODEBOOK
+
+the end product should look like this:
+
+`HuffmanCodebook`
+
+token     binary
+-------------------
+a         0
+b         101
+...
+
+
+1) get file name (char* filename)
+2) read filez into a linked list (Token_read_file_distinct)
+ - every linked list node has a frequency and a value
+  typedef struct Token {
+    char* token;
+    int frequency;
+    struct Token* next;
+  } Token;
+
+3) insert every linked list value into a min heap
+insert(heap, token)
+
+*make functon that taken in a list and converts to a
+huffman tree?*
+
+while the heap has more than 1 node:
+  4) extract the minimum two elements
+  5) combine them into one node
+  6) add them back to the min heap
+
+7) the last node in the min heap is the final huffman tree
+8) use this huffman tree to create a codebook
+
+
+*/
 void buildCodebook(char* pathname) {
-  printf("buidling codebook for %s...\n", pathname);
+  printf("building codebook for %s\n", pathname);
+  Token* frequencies = Token_read_file_distinct(pathname);
 }
 
 int main(int argc, char** argv) {
@@ -57,8 +101,14 @@ int main(int argc, char** argv) {
   listFilesRecursive( flags->file_path, decompress );
   listFilesRecursive( flags->file_path, buildCodebook );
 
-  // TokenNode* tokens = file_to_list(flags->file_path);
-  // print_tokens(tokens);
+  // Token* tokens = Token_read_file_distinct(flags->file_path);
+  // Token_print(tokens);
+
+  // if (flags->build_codebook) {}
+
+  // if (flags->compress) {}
+
+  // if (flags->decompress) {}
 
   return 0;
 }
