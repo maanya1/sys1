@@ -42,7 +42,9 @@ void listFilesRecursive(char *basePath, void (*some_function)(char*, void*), voi
 }
 
 void compress(char* pathname, void* data) {
-
+  //read in huffman codebook file, build tree and then look up word in tree and then write to .hcz file
+  //while() we read huffman codebook
+  
   printf("compressing %s\n", pathname);
   
 }
