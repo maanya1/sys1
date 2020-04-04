@@ -8,7 +8,6 @@
 #define HUFF_H
 
 TreeNode* Huffman_from_list(Token* list);
-TreeNode* Huffman_from_codebook(char* codebook);
 void printCodes(char* path, TreeNode* treeNode);
 void printCodesHelper(int fd, TreeNode* treeNode, char* prefix);
 
