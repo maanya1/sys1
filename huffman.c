@@ -37,19 +37,25 @@ TreeNode* Huffman_from_list(Token* list) {
 }
 
 void printCodes(char* path, TreeNode* treeNode){
-  int fd = open(path, O_WRONLY | O_TRUNC | O_CREAT, 777);
+  int fd = creat(path, 0777);
 
   printf("file desc: %d, error: %s\n", fd, strerror(errno));
+
+  printCodesHelper(fd, treeNode, "");
 }
 
-void printCodesHelper(int fd, TreeNode* treeNode, char* prefix){
+boolean is_space(char c) { return c == '\n' || c == '\t' || c == ''; }
 
+void printCodesHelper(int fd, TreeNode* treeNode, char* prefix){
   if (treeNode->left == NULL && treeNode->right == NULL) {
     // prefix, tab, word, new line, null char
     int length = strlen(prefix) + 1 + strlen(treeNode->word) + 2;
     char* out_string = malloc(sizeof(char) * length);
+
     strcpy(out_string, prefix);
     strcat(out_string, "\t");
+    strcat(out_string, treeNode->word));
+    strcat(out_string, "\n");
 
     printf("%s", out_string);
     write(fd, out_string, strlen(out_string));
@@ -61,8 +67,9 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix){
     // zeroes out array
     memset(new_string, '\0', strlen(prefix) +  1 + 1);
     strcpy(new_string, prefix);
-    strcat(new_string, "1");
+    strcat(new_string, "0");
 
+   printCodesHelper(fd, treeNode->left, new_string);
   }
 
   if (treeNode->right != NULL) {

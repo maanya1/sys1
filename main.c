@@ -66,35 +66,24 @@ int main(int argc, char** argv) {
   Flags* flags = get_flags(argc, argv);
 
   if (flags->build_codebook) {
-    if (flags->recursive) {
-      Token* head = Token_create(NULL);
-      listFilesRecursive( flags->file_path, buildCodebook, head);
+    Token* head = Token_create(NULL);
 
-      Token* tokens = head->next;
-      TreeNode* huff = Huffman_from_list(tokens);
-      printCodes("./HuffmanCodes.txt", huff);
+    if (flags->recursive) {
+      listFilesRecursive(flags->file_path, buildCodebook, head);
     } else {
-      Token* tokens = Token_read_file_distinct(flags->file_path);
-      TreeNode* huff = Huffman_from_list(tokens);;
-      printCodes("./HuffmanCodes.txt", huff);
+      buildCodebook(flags->file_path, head);
     }
+
+    Token* tokens = head->next;
+    TreeNode* huff = Huffman_from_list(tokens);;
+    printCodes("./HuffmanCodes", huff);
   }
 
-  // listFilesRecursive( flags->file_path, compress );
-  // listFilesRecursive( flags->file_path, decompress );
-  // listFilesRecursive( flags->file_path, buildCodebook );
+  if (flags->compress) {
+    
+  }
 
-  // Token* tokens = Token_read_file_distinct(flags->file_path);
-
-  // TreeNode* huff = Huffman_from_list(tokens);
-
-  // printCodes(huff);
-
-  // if (flags->build_codebook) {}
-
-  // if (flags->compress) {}
-
-  // if (flags->decompress) {}
+  if (flags->decompress) {}
 
   return 0;
 }

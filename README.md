@@ -8,11 +8,14 @@
   - Decompression: use the generated Huffman table to decompress the file.
   - Compression: use the generated Huffman table to compress the file.
 
-## TODO
+## Todo
 
 - Error checking things
 - Fix heap 'capacity' check. A capacity of 1 is not working
 - Fix whitespace stuff in codebook (newline, tab, space)
+
+## Done
+
 - Can't overwrite an old file
 
 ## Authors
