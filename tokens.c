@@ -12,7 +12,7 @@ Token* Token_create(char* token) {
   Token* node = malloc(sizeof(Token));
 
   node->frequency = 1;
-  node->token = strdup(token);
+  node->token = token == NULL ? "" : strdup(token);
   node->next = NULL;
   
   return node;

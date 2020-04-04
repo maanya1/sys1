@@ -3,6 +3,9 @@
 #include<string.h>
 #include "tokens.h"
 
+#ifndef HEAP_H
+#define HEAP_H
+
 typedef struct TreeNode {
     int frequency;
     char* word;
@@ -18,9 +21,13 @@ typedef struct Heap{
 } Heap;
 
 Heap *CreateHeap(int capacity);
-TreeNode* create_heap_node(int frequency, char* word);
+TreeNode* create_tree_node(int frequency, char* word);
 void insert(Heap *h, Token* key);
+void insert_tree_node(Heap *h, TreeNode* key);
 void siftUp(Heap *h, int i);
 TreeNode* removeMin(Heap *h);
 void swap(TreeNode **a, TreeNode **b);
 void printHeap(Heap *h);
+int isSizeOne(Heap* h);
+
+#endif
