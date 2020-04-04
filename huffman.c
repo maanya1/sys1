@@ -1,26 +1,27 @@
-#include "tokens.h"
-#include "heap.h"
 #include "huffman.h"
-#include <unistd.h>
+
+#include <errno.h>
 #include <fcntl.h>
 #include <string.h>
-#include <errno.h>
+#include <unistd.h>
+
+#include "heap.h"
+#include "tokens.h"
 
 TreeNode* Huffman_from_list(Token* list) {
   Heap* new_heap = CreateHeap(5);
 
-  while(list != NULL){
-      Token* next = list->next;
-      list->next = NULL;
-      printf("token: %s\n", list->token);
+  while (list != NULL) {
+    Token* next = list->next;
+    list->next = NULL;
+    printf("token: %s\n", list->token);
 
-      insert(new_heap, list);
+    insert(new_heap, list);
 
-      list = next;
+    list = next;
   }
 
-
-   while (!isSizeOne(new_heap)) {
+  while (!isSizeOne(new_heap)) {
     TreeNode* temp1 = removeMin(new_heap);
     printf("temp1: %s\n", temp1->word);
     TreeNode* temp2 = removeMin(new_heap);
@@ -32,11 +33,11 @@ TreeNode* Huffman_from_list(Token* list) {
 
     insert_tree_node(new_heap, new);
   }
-  
+
   return new_heap->arr[0];
 }
 
-void printCodes(char* path, TreeNode* treeNode){
+void printCodes(char* path, TreeNode* treeNode) {
   int fd = creat(path, 0777);
 
   printf("file desc: %d, error: %s\n", fd, strerror(errno));
@@ -44,9 +45,7 @@ void printCodes(char* path, TreeNode* treeNode){
   printCodesHelper(fd, treeNode, "");
 }
 
-boolean is_space(char c) { return c == '\n' || c == '\t' || c == ''; }
-
-void printCodesHelper(int fd, TreeNode* treeNode, char* prefix){
+void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
   if (treeNode->left == NULL && treeNode->right == NULL) {
     // prefix, tab, word, new line, null char
     int length = strlen(prefix) + 1 + strlen(treeNode->word) + 2;
@@ -54,7 +53,7 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix){
 
     strcpy(out_string, prefix);
     strcat(out_string, "\t");
-    strcat(out_string, treeNode->word));
+    strcat(out_string, treeNode->word);
     strcat(out_string, "\n");
 
     printf("%s", out_string);
@@ -65,23 +64,63 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix){
   if (treeNode->left != NULL) {
     char* new_string = malloc(strlen(prefix) + 1 + 1);
     // zeroes out array
-    memset(new_string, '\0', strlen(prefix) +  1 + 1);
+    memset(new_string, '\0', strlen(prefix) + 1 + 1);
     strcpy(new_string, prefix);
     strcat(new_string, "0");
 
-   printCodesHelper(fd, treeNode->left, new_string);
+    printCodesHelper(fd, treeNode->left, new_string);
   }
 
   if (treeNode->right != NULL) {
     // makes new string
-    char* new_string = malloc(strlen(prefix) +  1 + 1);
+    char* new_string = malloc(strlen(prefix) + 1 + 1);
     // zeroes out array
-    memset(new_string, '\0', strlen(prefix) +  1 + 1);
+    memset(new_string, '\0', strlen(prefix) + 1 + 1);
     strcpy(new_string, prefix);
     strcat(new_string, "1");
 
     // printf("going to right on %s\n", new_string);
     printCodesHelper(fd, treeNode->right, new_string);
-  } 
-  
+  }
+}
+
+TreeNode* Huffman_insert(TreeNode* huff, char* prefix, char* word) {
+  if (strlen(prefix) == 0) {
+    return create_tree_node(0, word);
+  }
+
+  if (huff == NULL) {
+    huff = create_tree_node(0, NULL);
+  }
+
+  if (prefix[0] == '0') {
+    huff->left = Huffman_insert(huff->left, prefix + 1, word);
+  }
+
+  if (prefix[0] == '1') {
+    huff->right = Huffman_insert(huff->right, prefix + 1, word);
+  }
+
+  return huff;
+}
+
+TreeNode* Huffman_from_codebook(char* codebook_path) {
+  int fd = open(codebook_path, O_RDONLY);
+  Token* tokens = Token_read_file(codebook_path);
+  TreeNode* huff = NULL;
+
+  while (tokens != NULL) {
+    char* encoding = tokens->token;
+    // skip tab
+    tokens = tokens->next->next;
+
+    char* word = tokens->token;
+
+    // skip new line
+    tokens = tokens->next->next;
+
+    huff = Huffman_insert(huff, encoding, word);
+  }
+
+  return huff;
 }
