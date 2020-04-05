@@ -16,6 +16,18 @@ TreeNode* create_tree_node(int frequency, char* word) {
     return node;
 } 
 
+TreeNode* compress_create_node(char* code, char* word) {
+    TreeNode* node = malloc(sizeof(TreeNode));
+
+    node->code = strdup(code);
+    node->word = word == NULL ? "\0" : strdup(word);
+
+    node->left = NULL;
+    node->right = NULL;
+
+    return node;
+} 
+
 Heap *CreateHeap(int capacity){
     Heap *h = (Heap * ) malloc(sizeof(Heap)); 
 

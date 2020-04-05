@@ -1,7 +1,7 @@
+#include "boolean.h"
+
 #ifndef FLAGS_H
 #define FLAGS_H
-
-typedef enum { false, true } boolean;
 
 typedef struct Flags {
   boolean build_codebook;

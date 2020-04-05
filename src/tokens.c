@@ -19,11 +19,8 @@ Token* Token_create(char* token) {
 }
 
 Token* Token_create_frequency(char* token, int frequency) {
-  Token* node = malloc(sizeof(Token));
-
+  Token* node = Token_create(token);
   node->frequency = frequency;
-  node->token = strdup(token);
-  node->next = NULL;
   
   return node;
 }

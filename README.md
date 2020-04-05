@@ -13,6 +13,8 @@
 - Error checking things
 - Fix heap 'capacity' check. A capacity of 1 is not working
 - Fix whitespace stuff in codebook (newline, tab, space)
+- flags
+
 
 ## Done
 
