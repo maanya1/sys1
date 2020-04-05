@@ -10,9 +10,21 @@
 #include "src/binary_tree.h"
 #include "src/recursive.h"
 
+#include "decompress.h"
+
+void decompress(Flags* flags) {
+  TreeNode* huff = Huffman_from_codebook(flags->codebook_path);
+
+  if (flags->recursive) {
+    listFilesRecursive(flags->file_path, decompress_helper, huff);
+  } else {
+    decompress_helper(flags->file_path, huff);
+  }
+}
+
 void decompress_helper(char* filename, void* data) {
   char* file_ending = strrchr(filename, '.');
-  if (strcmp(file_ending, ".hez") != 0) return;
+  if (strcmp(file_ending, ".hcz") != 0) return;
 
   char* file_path = strndup(filename, strlen(filename) - 4);
 
@@ -30,15 +42,5 @@ void decompress_helper(char* filename, void* data) {
       write(write_fd, tree->word, strlen(tree->word));
       tree = data;
     }
-  }
-}
-
-void decompress(Flags* flags) {
-  TreeNode* huff = Huffman_from_codebook(flags->codebook_path);
-
-  if (flags->recursive) {
-    listFilesRecursive(flags->file_path, decompress_helper, huff);
-  } else {
-    decompress_helper(flags->file_path, huff);
   }
 }

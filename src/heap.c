@@ -8,7 +8,8 @@ TreeNode* create_tree_node(int frequency, char* word) {
     TreeNode* node = malloc(sizeof(TreeNode));
 
     node->frequency = frequency;
-    node->word = word == NULL ? "\0" : strdup(word);
+    node->word = word == NULL ? "" : strdup(word);
+    node->code = "";
 
     node->left = NULL;
     node->right = NULL;
@@ -20,7 +21,8 @@ TreeNode* compress_create_node(char* code, char* word) {
     TreeNode* node = malloc(sizeof(TreeNode));
 
     node->code = strdup(code);
-    node->word = word == NULL ? "\0" : strdup(word);
+    node->word = word == NULL ? "" : strdup(word);
+    node->frequency = 1;
 
     node->left = NULL;
     node->right = NULL;

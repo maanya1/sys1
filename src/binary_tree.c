@@ -18,12 +18,12 @@ TreeNode* Tree_insert(TreeNode* root, TreeNode* node) {
     if (root == NULL) return node;
 
     if(strcmp(node->word, root->word) < 0){
-        node->left = Tree_insert(root->left, node);
+        root->left = Tree_insert(root->left, node);
     } else if (strcmp(node->word, root->word) > 0){
-        node->right = Tree_insert(root->right, node);
+        root->right = Tree_insert(root->right, node);
     } else {
-        node->frequency++;
+        root->frequency++;
     }
 
-    return node;
+    return root;
 }

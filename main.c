@@ -1,8 +1,4 @@
 #include "src/flags.h"
-#include "src/tokens.h"
-#include "src/huffman.h"
-#include "src/binary_tree.h"
-#include "src/recursive.h"
 
 #include "build_codebook.h"
 #include "decompress.h"

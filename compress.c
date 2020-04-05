@@ -16,7 +16,6 @@ void compress(Flags* flags) {
   TreeNode* tree = NULL;
   Token* tokens = Token_read_file(flags->codebook_path);
 
-
   while (tokens != NULL) {
     char* encoded = tokens->token;
     tokens = tokens->next->next; // skip tab
@@ -28,8 +27,6 @@ void compress(Flags* flags) {
     tree = Tree_insert(tree, new);
   }
 
-
-
   if (flags->recursive) {
     listFilesRecursive(flags->file_path, compress_helper, tree);
   } else {
@@ -38,8 +35,6 @@ void compress(Flags* flags) {
 }
 
 void compress_helper(char* pathname, void* data) {
-  printf("compressing %s\n", pathname);
-
   TreeNode* tree = data;
 
   // https://stackoverflow.com/questions/5309471/getting-file-extension-in-c
