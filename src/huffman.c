@@ -9,29 +9,31 @@
 #include "tokens.h"
 
 TreeNode* Huffman_from_list(Token* list) {
+  if (list == NULL) {
+    return NULL;
+  }
+
   Heap* new_heap = CreateHeap(5);
 
   while (list != NULL) {
     Token* next = list->next;
     list->next = NULL;
-    printf("token: %s\n", list->token);
 
-    insert(new_heap, list);
-
+    new_heap = insert(new_heap, list);
     list = next;
   }
 
+  printHeap(new_heap);
+
   while (!isSizeOne(new_heap)) {
     TreeNode* temp1 = removeMin(new_heap);
-    printf("temp1: %s\n", temp1->word);
     TreeNode* temp2 = removeMin(new_heap);
-    printf("temp2: %s\n", temp2->word);
 
     TreeNode* new = create_tree_node(temp1->frequency + temp2->frequency, NULL);
     new->left = temp1;
     new->right = temp2;
 
-    insert_tree_node(new_heap, new);
+    new_heap = insert_tree_node(new_heap, new);
   }
 
   return new_heap->arr[0];
@@ -42,14 +44,27 @@ void printCodes(char* path, TreeNode* treeNode) {
 
   printf("file desc: %d, error: %s\n", fd, strerror(errno));
 
-  printCodesHelper(fd, treeNode, "");
+  if (treeNode != NULL) {
+    printCodesHelper(fd, treeNode, "");
+  }
+
+  close(fd);
 }
 
 void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
+  if (treeNode == NULL) {
+    return;
+  }
+  
   if (treeNode->left == NULL && treeNode->right == NULL) {
     // prefix, tab, word, new line, null char
     int length = strlen(prefix) + 1 + strlen(treeNode->word) + 2;
     char* out_string = malloc(sizeof(char) * length);
+    
+    // if the node is root
+    if (strlen(prefix) == 0) {
+      prefix = "0";
+    }
 
     strcpy(out_string, prefix);
     strcat(out_string, "\t");
@@ -58,6 +73,9 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
 
     printf("%s", out_string);
     write(fd, out_string, strlen(out_string));
+
+    free(out_string);
+
     return;
   }
 
@@ -82,6 +100,10 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     // printf("going to right on %s\n", new_string);
     printCodesHelper(fd, treeNode->right, new_string);
   }
+
+  if (strlen(prefix) != 0) {
+    free(prefix);
+  }
 }
 
 TreeNode* Huffman_insert(TreeNode* huff, char* prefix, char* word) {
@@ -105,7 +127,6 @@ TreeNode* Huffman_insert(TreeNode* huff, char* prefix, char* word) {
 }
 
 TreeNode* Huffman_from_codebook(char* codebook_path) {
-  int fd = open(codebook_path, O_RDONLY);
   Token* tokens = Token_read_file(codebook_path);
   TreeNode* huff = NULL;
 

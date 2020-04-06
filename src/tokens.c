@@ -4,8 +4,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <ctype.h>
+
 #include "flags.h"
 #include "tokens.h"
+#include "warning.h"
+
+
 
 // `create` - creates a new token node
 Token* Token_create(char* token) {
@@ -96,10 +100,10 @@ void Token_print(Token* node) {
 
 // `read_file` - reads a file into a list
 Token* Token_read_file(char* filename) {
-  int fd = open(filename, O_RDONLY);
+  int fd = open(filename, O_RDONLY, 0777);
 
   if (fd < 0) {
-    printf("could not open file\n");
+    Warning_print_warning("File could not be opened.");
     return NULL;
   }
 
@@ -119,6 +123,7 @@ Token* Token_read_file(char* filename) {
           char* non_space_str = Token_to_string(non_space_tokens);
           all_tokens = Token_append(all_tokens, Token_create(non_space_str));
           non_space_tokens = NULL; // Reset non-space list.
+          free(non_space_str);
         } 
 
         // Add the space.
@@ -129,12 +134,21 @@ Token* Token_read_file(char* filename) {
     }
   }
 
+
+  free(token);
+  close(fd);
+
   // Add leftover non-space characters.
   if (non_space_tokens != NULL) {
     char* non_space_str = Token_to_string(non_space_tokens);
     all_tokens = Token_append(all_tokens, Token_create(non_space_str));
+    free(non_space_str);
   }
 
+  if (all_tokens == NULL) {
+    Warning_print_warning("Empty file!");
+  }
+ 
   return all_tokens;
 }
 

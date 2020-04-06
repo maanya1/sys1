@@ -15,13 +15,19 @@ void build_codebook(Flags* flags) {
     build_codebook_helper(flags->file_path, head);
   }
 
+
+
   Token* tokens = head->next;
-  TreeNode* huff = Huffman_from_list(tokens);
-  printCodes("./HuffmanCodes", huff);
+  Token_print(tokens);
+
+  if (tokens != NULL) {
+    TreeNode* huff = Huffman_from_list(tokens);
+    printCodes("./HuffmanCodes", huff);
+  }
 }
 
 void build_codebook_helper(char* pathname, void* data) {
-  printf("building codebook for %s\n", pathname);
+  printf("Buidling for %s...\n", pathname);
 
   Token* head = data;
   Token* list = head->next;

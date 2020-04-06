@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "src/flags.h"
 
 #include "build_codebook.h"
@@ -18,6 +20,8 @@ int main(int argc, char** argv) {
   if (flags->decompress) {
     decompress(flags);
   }
+
+  free(flags);
 
   return 0;
 }

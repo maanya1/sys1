@@ -9,6 +9,7 @@
 #include "src/huffman.h"
 #include "src/binary_tree.h"
 #include "src/recursive.h"
+#include "src/warning.h"
 
 #include "decompress.h"
 
@@ -29,11 +30,23 @@ void decompress_helper(char* filename, void* data) {
   char* file_path = strndup(filename, strlen(filename) - 4);
 
   TreeNode* tree = data;
-  int open_fd = open(filename, O_RDONLY, 0777);
+  int read_fd = open(filename, O_RDONLY, 0777);
+  
+  if (read_fd < 0) {
+    Warning_print_warning("File could not be opened.");
+    return;
+  }
+
   int write_fd = creat(file_path, 0777);
 
+  if (write_fd< 0) {
+    Warning_print_warning("File could not be decompressed.");
+    return;
+  }
+
+
   char* buffer = malloc(sizeof(char));
-  while (read(open_fd, buffer, 1) > 0) {
+  while (read(read_fd, buffer, 1) > 0) {
     char token = buffer[0];
 
     if (token == '0') tree = tree->left;
@@ -43,4 +56,8 @@ void decompress_helper(char* filename, void* data) {
       tree = data;
     }
   }
+
+  free(buffer);
+  close(write_fd);
+  close(read_fd);
 }

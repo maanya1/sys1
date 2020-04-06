@@ -9,12 +9,19 @@
 #include "src/huffman.h"
 #include "src/binary_tree.h"
 #include "src/recursive.h"
+#include "src/free.h"
+#include "src/warning.h"
 
 #include "compress.h"
 
 void compress(Flags* flags) {
   TreeNode* tree = NULL;
   Token* tokens = Token_read_file(flags->codebook_path);
+
+  if (tokens == NULL) {
+    Warning_print_warning("Codebook was empty.");
+    return;
+  }
 
   while (tokens != NULL) {
     char* encoded = tokens->token;
@@ -32,6 +39,8 @@ void compress(Flags* flags) {
   } else {
     compress_helper(flags->file_path, tree);
   }
+
+  Free_binary_tree(tree);
 }
 
 void compress_helper(char* pathname, void* data) {
@@ -44,9 +53,7 @@ void compress_helper(char* pathname, void* data) {
   Token* tokens = Token_read_file(pathname);
 
   if (tokens == NULL) {
-    printf("Fatal Error: file\"");
-    printf("%s\" ", pathname);
-    printf("does not exist\n");
+    Warning_print_warning("File was empty and was not compressed.");
   }
 
   char* output_filename = malloc(strlen(pathname) + strlen(".hcz") + 1);
@@ -55,6 +62,7 @@ void compress_helper(char* pathname, void* data) {
 
   int fd = creat(output_filename, 0777);
 
+  free(output_filename);
   while (tokens != NULL) {
     TreeNode* node = Tree_search(tree, tokens->token);
     char* encoding = node->code;
@@ -63,4 +71,5 @@ void compress_helper(char* pathname, void* data) {
 
     tokens = tokens->next;
   }
+  close(fd);
 }

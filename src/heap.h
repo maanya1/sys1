@@ -24,8 +24,8 @@ typedef struct Heap{
 Heap *CreateHeap(int capacity);
 TreeNode* create_tree_node(int frequency, char* word);
 TreeNode* compress_create_node(char* code, char* word);
-void insert(Heap *h, Token* key);
-void insert_tree_node(Heap *h, TreeNode* key);
+Heap* insert(Heap *h, Token* key);
+Heap* insert_tree_node(Heap *h, TreeNode* key);
 void siftUp(Heap *h, int i);
 TreeNode* removeMin(Heap *h);
 void swap(TreeNode **a, TreeNode **b);

@@ -76,39 +76,31 @@ void heapify(Heap *h, int i){
     }
 }
 
-//void heapSort(Heap *h, int n){
-    // n is the size of the heap
-//    for (int i = n / 2 - 1; i >= 0; i--) 
-//      heapify(h->arr, n, i);
-//}
-
-void insert(Heap *h, Token* token){
-    if (h->count >= h->capacity) {
-        int new_size = h->capacity * 2;
-        Heap *newHeap = CreateHeap(new_size);
-        for(int i = 0; i < h->count; i++){
-            Token* token = Token_create_frequency(h->arr[i]->word, h->arr[i]->frequency);
-            insert(newHeap, token);
-        }
-    }
-
-    h->arr[h->count] = create_tree_node(token->frequency, token->token);
-    siftUp(h, h->count);
-    h->count++;
+Heap* insert(Heap *h, Token* token){
+    TreeNode* node = create_tree_node(token->frequency, token->token);
+    return insert_tree_node(h, node);
 }
 
-void insert_tree_node(Heap *h, TreeNode* node){
+Heap* insert_tree_node(Heap *h, TreeNode* node){
     if (h->count >= h->capacity) {
         int new_size = h->capacity * 2;
-        Heap *newHeap = CreateHeap(new_size);
-        for(int i = 0; i < h->count; i++){
-            insert_tree_node(newHeap, h->arr[i]);
+        TreeNode** new_heap = malloc(sizeof(TreeNode*) * new_size);
+
+        int i = 0;
+        for(; i < h->count; i++){
+            new_heap[i] = h->arr[i];
         }
+
+        // free(h->arr);
+        h->capacity = new_size;
+        h->arr = new_heap;
     }
 
     h->arr[h->count] = node;
     siftUp(h, h->count);
     h->count++;
+
+    return h;
 }
 
 void siftUp(Heap *h, int i){
@@ -139,9 +131,10 @@ TreeNode* removeMin(Heap *h){
 }
 
 void printHeap(Heap *h){
-    while(h->count > 0) {
-        TreeNode* min = removeMin(h);
-        printf("%d %s\n", min->frequency, min->word);
+    int i = 0;
+    for(; i < h->count; i++) {
+        TreeNode* node = h->arr[i];
+        printf("frequencyt: %d, token: %s\n", node->frequency, node->word);
     }
 }
 
