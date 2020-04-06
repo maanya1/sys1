@@ -10,6 +10,7 @@ typedef struct Token {
 Token* Token_create(char* token);
 Token* Token_create_frequency(char* token, int frequency);
 Token* Token_append(Token* head, Token* node);
+Token* Token_prepend(Token* head, Token* node);
 Token* Token_append_distinct(Token* head, Token* node);
 Token* Token_merge(Token* list_a, Token* list_b);
 

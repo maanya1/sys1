@@ -1,12 +1,17 @@
 # Design And Implementation
 ### Authors: Sam Olagun and Maanya Tandon
 
+## Organization
 For organization of our code, we separated all of our helper functions into different .c files, and put them into a src folder. We have heap.c which functions as a heap class. flags.c parses through the input to the command line and calls the correct functions (compress, decompress, etc). Tokens.c tokenizes the file into the linked list and gets the frequencies. Huffman.c creates the huffman codebook using a heap. Warnings.c outputs the correct statements, and free.c contains the helper functions used to free memory. Outside of the src folder we have the main program functions in compress,c, decompress.c, and build_codebook.c.
 
 ## Tokenizing the file
 This project is intended to be used as a file compression system. In the terminal we are 
 given a 2 flags (whether to build the huffman codebook recursively or not), and then a path or a file. 
 We tokenize the file in tokens.c by using whitespaces as a delimiter. Tokens.c has 2 functions: Token_create and Token_create_frequency which assigned the word and the frequency to a token. Token_read_file reads the file in general, but token_read_file_distinct read the file and incremented the frequencies. All the tokens were stored in a linked list.
+
+## Flags
+We handle the flags by having a flags struct that stores the flag type for build codebook, compress, decompress, and recursive in booleans in the struct.
+For the flags, we handled testcases such as the number of flags inputted, and the types of flags inputted. If more than 2 of the accepted flags are inputted, we output a warning that says more than 2 flags can not be inputted. If more than 2 flags are inputted and one of the flags does not exist, it outputs a warning that you can not have more than 2 flags, but it still runs because 2 of the flags were valid. When flags are mixed (ex. -Rb instead of -R -b), a warning is given to the user that flags can not be mixed.
 
 **Tokenizing the file has an O(n) runtime complexity because it is just traversing through a linked list.**
 
@@ -38,7 +43,6 @@ Since each node is visited once, the total run time is: **O(_n_)**.
 
 
 ### Printing the Huffman Tree
-
 
 ## Compression
 Compression is started by parsing through the file created by huffman codebook, and tokenizing each word and it's code into a tree node. We do this by creating a linked list called tokens from the 'tokens_read_file' function. We traverse the linked list and add each huffman code with it's associated word to a node. **Traversing through a linked list is O(n) time complexity.** We create each node using the 'compress_create_node' function in our heap class, and insert each element into the tree using the 'Tree_insert' function from binary_tree.c. Eventually, we have a tree which has each word and it's associated code. We created a function called 'compress_helper' which takes the pathname and a void pointer to a piece of data. The compress helper mallocs enough data for the .hcz file and outputs the results of the compression to the file by searching for each token in the tree. 

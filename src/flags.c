@@ -36,26 +36,24 @@ Flags* get_flags(int argc, char** argv) {
 
         if (flag == 'b') {
           flags->build_codebook = true;
-          flagCount++;
         } else if (flag == 'c') {
           flags->compress = true;
-          flagCount++;
         } else if (flag == 'd') {
           flags->decompress = true;
-          flagCount++;
         } else if (flag == 'R') {
           if (flagCount > 0) {
             Warning_print_warning("Recursive flag needs to go first.");
           }
 
           flags->recursive = true;
-          flagCount++;
         } else {
           Warning_print_warning("Unknown flag.");
         }
       } else {
         Warning_print_warning("Can't combine arguments! i.e. Instead of `-bR` try `-b -R`.");
       }
+
+      flagCount++;
     } else if (strncmp(argv[i], ".", 1) == 0 || strncmp(argv[i], "/", 1) == 0) {
       if (flags->file_path == NULL) {
         flags->file_path = argv[i];
@@ -65,10 +63,10 @@ Flags* get_flags(int argc, char** argv) {
     } else {
       Warning_print_warning("Valid flags include '-b', '-c', '-d', and '-R'. All files must start with '.' or '/'.");
     }
+  }
 
-    if (flagCount > 2) {
-      Warning_print_warning("You can't have more than 2 flags!");
-    }
+  if (flagCount > 2) {
+    Warning_print_warning("You can't have more than 2 flags!");
   }
 
   if ((flags->compress || flags-> decompress ) && flags->codebook_path == NULL) {

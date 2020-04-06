@@ -17,10 +17,14 @@ Later:
 - Overwriting files
 
 Different inputs to the terminal
+
+sam
 -the input should be ./fileCompressor <flag> <path or file> |codebook|
 -inputting too many flags
 -inputting not enough flags
--inputting flags in the wrong order 
+-inputting flags in the wrong order
+
+maanya
 -inputting flags that do not exist (anything other than -b, -c, -d, or -R)
 -no mixing flags, (ex. must be -R -b, not -Rb)
 -giving an invalid pathname or filename

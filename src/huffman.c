@@ -42,8 +42,6 @@ TreeNode* Huffman_from_list(Token* list) {
 void printCodes(char* path, TreeNode* treeNode) {
   int fd = creat(path, 0777);
 
-  printf("file desc: %d, error: %s\n", fd, strerror(errno));
-
   if (treeNode != NULL) {
     printCodesHelper(fd, treeNode, "");
   }
@@ -71,7 +69,7 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcat(out_string, treeNode->word);
     strcat(out_string, "\n");
 
-    printf("%s", out_string);
+    // printf("%s", out_string);
     write(fd, out_string, strlen(out_string));
 
     free(out_string);
@@ -97,7 +95,6 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcpy(new_string, prefix);
     strcat(new_string, "1");
 
-    // printf("going to right on %s\n", new_string);
     printCodesHelper(fd, treeNode->right, new_string);
   }
 

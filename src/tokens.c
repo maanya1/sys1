@@ -39,6 +39,12 @@ Token* Token_append(Token* head, Token* node) {
   return head;
 }
 
+// `prepend` - prepends a node to a token linked list
+Token* Token_prepend(Token* head, Token* node) {
+  node->next = head;
+  return node;
+}
+
 // `merge` - merges two token linked lists distinctly
 Token* Token_merge(Token* list_a, Token* list_b) {
   while (list_b != NULL) {
