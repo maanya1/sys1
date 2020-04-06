@@ -72,7 +72,7 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     // printf("%s", out_string);
     write(fd, out_string, strlen(out_string));
 
-    free(out_string);
+    //free(out_string);
 
     return;
   }
@@ -85,6 +85,7 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcat(new_string, "0");
 
     printCodesHelper(fd, treeNode->left, new_string);
+    //free(new_string);
   }
 
   if (treeNode->right != NULL) {
@@ -96,11 +97,12 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcat(new_string, "1");
 
     printCodesHelper(fd, treeNode->right, new_string);
+    //free(new_string);
   }
 
-  if (strlen(prefix) != 0) {
-    free(prefix);
-  }
+  // if (strlen(prefix) != 0) {
+  //   free(prefix);
+  // }
 }
 
 TreeNode* Huffman_insert(TreeNode* huff, char* prefix, char* word) {

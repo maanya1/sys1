@@ -19,6 +19,7 @@ void build_codebook(Flags* flags) {
 
   Token* tokens = head->next;
   Token_print(tokens);
+  free(head);
 
   if (tokens != NULL) {
     TreeNode* huff = Huffman_from_list(tokens);
