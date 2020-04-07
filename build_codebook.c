@@ -1,11 +1,11 @@
 #include "build_codebook.h"
 
-#include "src/tokens.h"
 #include "src/flags.h"
-#include "src/huffman.h"
-#include "src/heap.h"
-#include "src/recursive.h"
 #include "src/free.h"
+#include "src/heap.h"
+#include "src/huffman.h"
+#include "src/recursive.h"
+#include "src/tokens.h"
 
 void build_codebook(Flags* flags) {
   Token* head = Token_create(NULL);
@@ -29,8 +29,6 @@ void build_codebook(Flags* flags) {
 }
 
 void build_codebook_helper(char* pathname, void* data) {
-  printf("Buidling for %s...\n", pathname);
-
   Token* head = data;
   Token* list = head->next;
 

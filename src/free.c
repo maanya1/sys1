@@ -1,53 +1,50 @@
-#include "tokens.h"
-#include "heap.h"
-
 #include "free.h"
+
 #include <string.h>
 
-// remember to free "strdup". also cmd + f for all malloc and make sure that
-// they're covered.
+#include "heap.h"
+#include "tokens.h"
 
-// don't forget to free strings malloced in structs
-
+// Frees a linked list of tokens.
 void Free_tokens_list(Token* head) {
-  if (head == NULL) return;
-  Token* next = head->next;
+  if (head == NULL) {
+    return;
+  }
 
   if (strlen(head->token) != 0) {
     free(head->token);
   }
+
+  Token* next = head->next;
   free(head);
 
-  printf("next: %p\n", next);
   Free_tokens_list(next);
 }
 
+// Frees a binary tree and it's nodes.
 void Free_binary_tree(TreeNode* root) {
-    if (root == NULL) return;
+  if (root == NULL) {
+    return;
+  }
 
-    TreeNode* left_node = root->left;
-    TreeNode* right_node = root->right;
+  if (strlen(root->word) > 0) {
+    free(root->word);
+  }
 
-    if (strlen(root->word) > 0) {
-      free(root->word);
-    }
+  if (strlen(root->code) > 0) {
+    free(root->code);
+  }
 
-    if (strlen(root->code) > 0) {
-        free(root->code);
-    }
-  
-    free(root);
+  TreeNode* left_node = root->left;
+  TreeNode* right_node = root->right;
+  free(root);
 
-    Free_binary_tree(left_node);
-    Free_binary_tree(right_node);
+  Free_binary_tree(left_node);
+  Free_binary_tree(right_node);
 }
 
+// Frees a heap, but not it's contents.
 void Free_heap(Heap* heap) {
-    int i = 0;
-    for (; i < heap->count; i++) {
-      Free_binary_tree(heap->arr[i]);
-    }
-
-    free(heap->arr);
-    free(heap);
+  free(heap->arr);
+  free(heap);
 }

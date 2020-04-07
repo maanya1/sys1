@@ -1,9 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
-#include "tokens.h"
 #include "heap.h"
-#include "huffman.h"
 
 #ifndef BINARY_TREE_H
 #define BINARY_TREE_H

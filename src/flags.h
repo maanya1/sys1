@@ -13,6 +13,6 @@ typedef struct Flags {
   char* codebook_path;
 } Flags;
 
-Flags* get_flags(int argc, char** argv);
+Flags* Flags_parse(int argc, char** argv);
 
 #endif

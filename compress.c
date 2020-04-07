@@ -1,18 +1,18 @@
-#include <stdlib.h>
-#include <string.h>
+#include "compress.h"
+
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
-#include "src/flags.h"
-#include "src/tokens.h"
-#include "src/huffman.h"
 #include "src/binary_tree.h"
-#include "src/recursive.h"
+#include "src/flags.h"
 #include "src/free.h"
+#include "src/huffman.h"
+#include "src/recursive.h"
+#include "src/tokens.h"
 #include "src/warning.h"
-
-#include "compress.h"
 
 void compress(Flags* flags) {
   TreeNode* tree = NULL;
@@ -26,12 +26,12 @@ void compress(Flags* flags) {
   Token* ptr = tokens;
   while (ptr != NULL) {
     char* encoded = ptr->token;
-    ptr = ptr->next->next; // skip tab
+    ptr = ptr->next->next;  // Tab
 
     char* word = ptr->token;
-    ptr = ptr->next->next; // skip new line
+    ptr = ptr->next->next;  // Newline
 
-    TreeNode* new = compress_create_node(encoded, word);
+    TreeNode* new = TreeNode_create_encoding(encoded, word);
     tree = Tree_insert(tree, new);
   }
 
@@ -48,8 +48,7 @@ void compress(Flags* flags) {
 void compress_helper(char* pathname, void* data) {
   TreeNode* tree = data;
 
-  // https://stackoverflow.com/questions/5309471/getting-file-extension-in-c
-  char *file_extension = strrchr(pathname, '.');
+  char* file_extension = strrchr(pathname, '.');
   if (strcmp(file_extension, ".hcz") == 0) return;
 
   Token* tokens = Token_read_file(pathname);
@@ -69,7 +68,7 @@ void compress_helper(char* pathname, void* data) {
   while (ptr != NULL) {
     TreeNode* node = Tree_search(tree, ptr->token);
     char* encoding = node->code;
-    
+
     write(fd, encoding, strlen(encoding));
     ptr = ptr->next;
   }

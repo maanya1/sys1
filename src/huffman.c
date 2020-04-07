@@ -5,22 +5,22 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "free.h"
 #include "heap.h"
 #include "tokens.h"
-#include "free.h"
 
 TreeNode* Huffman_from_list(Token* list) {
   if (list == NULL) {
     return NULL;
   }
 
-  Heap* new_heap = CreateHeap(5);
+  Heap* new_heap = Heap_create(5);
 
   while (list != NULL) {
     Token* node = Token_create_frequency(list->token, list->frequency);
-    new_heap = insert(new_heap, node);
+    new_heap = Heap_insert(new_heap, node);
     Free_tokens_list(node);
-    list = list->next;;
+    list = list->next;
   }
 
   printHeap(new_heap);
@@ -29,11 +29,11 @@ TreeNode* Huffman_from_list(Token* list) {
     TreeNode* temp1 = removeMin(new_heap);
     TreeNode* temp2 = removeMin(new_heap);
 
-    TreeNode* new = create_tree_node(temp1->frequency + temp2->frequency, NULL);
+    TreeNode* new = TreeNode_create(temp1->frequency + temp2->frequency, NULL);
     new->left = temp1;
     new->right = temp2;
 
-    new_heap = insert_tree_node(new_heap, new);
+    new_heap = Heap_insert_node(new_heap, new);
   }
 
   TreeNode* items = new_heap->arr[0];
@@ -56,12 +56,12 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
   if (treeNode == NULL) {
     return;
   }
-  
+
   if (treeNode->left == NULL && treeNode->right == NULL) {
     // prefix, tab, word, new line, null char
     int length = strlen(prefix) + 1 + strlen(treeNode->word) + 2;
     char* out_string = malloc(sizeof(char) * length);
-    
+
     // if the node is root
     if (strlen(prefix) == 0) {
       prefix = "0";
@@ -105,11 +105,11 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
 
 TreeNode* Huffman_insert(TreeNode* huff, char* prefix, char* word) {
   if (strlen(prefix) == 0) {
-    return create_tree_node(0, word);
+    return TreeNode_create(0, word);
   }
 
   if (huff == NULL) {
-    huff = create_tree_node(0, NULL);
+    huff = TreeNode_create(0, NULL);
   }
 
   if (prefix[0] == '0') {
