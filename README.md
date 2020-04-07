@@ -1,5 +1,4 @@
-# Design And Implementation
-### Authors: Sam Olagun and Maanya Tandon
+# Design & Implementation
 
 ## Organization
 For organization of our code, we separated all of our helper functions into different .c files, and put them into a src folder. We have heap.c which functions as a heap class. flags.c parses through the input to the command line and calls the correct functions (compress, decompress, etc). Tokens.c tokenizes the file into the linked list and gets the frequencies. Huffman.c creates the huffman codebook using a heap. Warnings.c outputs the correct statements, and free.c contains the helper functions used to free memory. Outside of the src folder we have the main program functions in compress,c, decompress.c, and build_codebook.c.
@@ -34,19 +33,22 @@ We created a function called `Token_read_file_distinct` which read a file into a
 q
 > Each linked list insertion for a distinct linked list is O(_n_) and we do _n_ of these. **The runtime of this operation is O(_n<sup>2</sup>_)**.
 
-The total run time is: **_n_ + _n<sup>2</sup>_ =  O(_n<sup>2</sup>_)**.
+The total run time is: **_n_ + _$n^2$_ =  $O(n^2)$**.
 
 ### Creating Huffman Tree
 We created the equivalent of a heap class with functions that created nodes for the heap, inserted nodes into the heap, sifted an element up to its proper place, removed the minimum, etc. The heap was used to build the huffman codebook. This was done by heapifying the tokens from the linked list, and then removing and merging the two smallest elements of the minheap and inserting it back in. Ultimately we are left with a tree which results in the codebook. 
 
 Since each node is visited once, the total run time is: **O(_n_)**.
 
-
-### Printing the Huffman Tree
-
 ## Compression
 Compression is started by parsing through the file created by huffman codebook, and tokenizing each word and it's code into a tree node. We do this by creating a linked list called tokens from the 'tokens_read_file' function. We traverse the linked list and add each huffman code with it's associated word to a node. **Traversing through a linked list is O(n) time complexity.** We create each node using the 'TreeNode_create_encoding' function in our heap class, and insert each element into the tree using the 'Tree_insert' function from binary_tree.c. Eventually, we have a tree which has each word and it's associated code. We created a function called 'compress_helper' which takes the pathname and a void pointer to a piece of data. The compress helper mallocs enough data for the .hcz file and outputs the results of the compression to the file by searching for each token in the tree. 
-> **Searching and inserting into a binary tree is O(logn) runtime on average, with it's worstcase runtime being O(n).**
+
+> Searching and inserting into a binary tree is O(logn) runtime on average, with it's worstcase runtime being O(n).
+
+| Worst Case | Average Case |
+|------------|--------------|
+| $O(n)$     | $O(log (n))$ |
+
 
 ## Decompression
 
@@ -59,28 +61,28 @@ Decompress came in three parts:
 ### Reading in `HuffmanCodebook`
 To read in `HuffmanCodebook` we used our `Token_read_file` method which reads a file into a linked list.
 
-Since every character _n_ is visited once and linked list insertion is  **O(_1_)** this operation is **O(_n_)**.
+Since every character $n$is visited once and linked list insertion is $O(1)$  this operation is $O(n)$ .
 
-Each of the _n_ lines is stored only once.
+Each of the $n$ lines is stored only once.
 
-Total Runtime |  Total Space Complexity 
-------------- | ---
-**O(_n_)**  | **O(_n_)** 
+| Total Runtime | Total Space Complexity |
+|---------------|------------------------|
+| $O(n)$        | $O(n)$                 |
 
 ### Recreating the Huffman Tree
-To recreate the Huffman tree, every one of the _n_ lines in `HuffmanCodebook` is inserted into a tree.
+To recreate the Huffman tree, every one of the $n$ lines in `HuffmanCodebook` is inserted into a tree.
 
-Since tree insertions are **O(_n_)** worst case in our Huffman tree (Huffman tree's are unbalanced), this operation is **O(_n<sup>2</sup>_)**.
+Since tree insertions are $O(n)$ worst case in our Huffman tree (Huffman tree's are unbalanced), this operation is $O(n^2)$.
 
-Every of the _n_ lines is stored once.
+Every of the $n$ lines is stored once.
 
-Total Runtime |  Total Space Complexity 
-------------- | ---
-**O(_n<sup>2</sup>_)**  | **O(_n_)** 
+| Total Runtime | Total Space Complexity |
+|---------------|------------------------|
+| $O(n^2)$      | $O(n)$                 |
 
 ### Decompressing the file
-To decompress the file, every one of the _k_ characters in our compessed file was visited once. On each character visit, the corresponding Huffman tree made one move, either to the left or the right **O(_1_)**. The only space allocated in this step is each character in the compressed file.
+To decompress the file, every one of the $k$ characters in our compessed file was visited once. On each character visit, the corresponding Huffman tree made one move, either to the left or the right $O(1)$. The only space allocated in this step is each character in the compressed file.
 
-Total Runtime |  Total Space Complexity 
-------------- | ---
-**O(_k_)** | **O(_k_)** 
+| Total Runtime | Total Space Complexity |
+|---------------|------------------------|
+| $O(k)$        | $O(k)$                 |

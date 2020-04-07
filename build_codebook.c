@@ -1,5 +1,7 @@
 #include "build_codebook.h"
 
+#include <string.h>
+
 #include "src/flags.h"
 #include "src/free.h"
 #include "src/heap.h"
@@ -29,6 +31,9 @@ void build_codebook(Flags* flags) {
 }
 
 void build_codebook_helper(char* pathname, void* data) {
+  char* file_extension = strrchr(pathname, '.');
+  if (strcmp(file_extension, ".hcz") == 0) return;
+
   Token* head = data;
   Token* list = head->next;
 
