@@ -5,8 +5,7 @@ all:
 	gcc $(c_files) $(src_files) -o fileCompressor
 
 clean:
-	rm -f fileCompressor HuffmanCodes ass
-	find . -type f -name "*.hcz" -delete
+	rm -f fileCompressor HuffmanCode
 
 pdf:
 	pandoc README.md -o README.pdf
