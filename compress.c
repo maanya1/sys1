@@ -23,12 +23,13 @@ void compress(Flags* flags) {
     return;
   }
 
-  while (tokens != NULL) {
-    char* encoded = tokens->token;
-    tokens = tokens->next->next; // skip tab
+  Token* ptr = tokens;
+  while (ptr != NULL) {
+    char* encoded = ptr->token;
+    ptr = ptr->next->next; // skip tab
 
-    char* word = tokens->token;
-    tokens = tokens->next->next; // skip new line
+    char* word = ptr->token;
+    ptr = ptr->next->next; // skip new line
 
     TreeNode* new = compress_create_node(encoded, word);
     tree = Tree_insert(tree, new);
@@ -40,6 +41,7 @@ void compress(Flags* flags) {
     compress_helper(flags->file_path, tree);
   }
 
+  Free_tokens_list(tokens);
   Free_binary_tree(tree);
 }
 
@@ -63,13 +65,15 @@ void compress_helper(char* pathname, void* data) {
   int fd = creat(output_filename, 0777);
 
   free(output_filename);
-  while (tokens != NULL) {
-    TreeNode* node = Tree_search(tree, tokens->token);
+  Token* ptr = tokens;
+  while (ptr != NULL) {
+    TreeNode* node = Tree_search(tree, ptr->token);
     char* encoding = node->code;
     
     write(fd, encoding, strlen(encoding));
-
-    tokens = tokens->next;
+    ptr = ptr->next;
   }
+
+  Free_tokens_list(tokens);
   close(fd);
 }

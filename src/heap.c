@@ -91,7 +91,7 @@ Heap* insert_tree_node(Heap *h, TreeNode* node){
             new_heap[i] = h->arr[i];
         }
 
-        // free(h->arr);
+        free(h->arr);
         h->capacity = new_size;
         h->arr = new_heap;
     }

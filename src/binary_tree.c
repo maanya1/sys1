@@ -1,5 +1,6 @@
 #include "heap.h"
 #include "boolean.h"
+#include "free.h"
 
 TreeNode* Tree_search(TreeNode* root, char* name) {
   if(root == NULL || strcmp(root->word, name) == 0) {
@@ -23,6 +24,7 @@ TreeNode* Tree_insert(TreeNode* root, TreeNode* node) {
         root->right = Tree_insert(root->right, node);
     } else {
         root->frequency++;
+        Free_binary_tree(root);
     }
 
     return root;

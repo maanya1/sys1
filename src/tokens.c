@@ -8,8 +8,7 @@
 #include "flags.h"
 #include "tokens.h"
 #include "warning.h"
-
-
+#include "free.h"
 
 // `create` - creates a new token node
 Token* Token_create(char* token) {
@@ -65,6 +64,7 @@ Token* Token_append_distinct(Token* head, Token* node) {
 
   if (strcmp(head->token, node->token) == 0) {
     head->frequency++;
+    Free_tokens_list(node);
     return head;
   }
 
@@ -128,6 +128,8 @@ Token* Token_read_file(char* filename) {
         if (non_space_tokens != NULL) {
           char* non_space_str = Token_to_string(non_space_tokens);
           all_tokens = Token_append(all_tokens, Token_create(non_space_str));
+
+          Free_tokens_list(non_space_tokens);
           non_space_tokens = NULL; // Reset non-space list.
           free(non_space_str);
         } 
@@ -140,7 +142,6 @@ Token* Token_read_file(char* filename) {
     }
   }
 
-
   free(token);
   close(fd);
 
@@ -148,6 +149,9 @@ Token* Token_read_file(char* filename) {
   if (non_space_tokens != NULL) {
     char* non_space_str = Token_to_string(non_space_tokens);
     all_tokens = Token_append(all_tokens, Token_create(non_space_str));
+
+    Free_tokens_list(non_space_tokens); 
+    non_space_tokens = NULL; // Reset non-space list.
     free(non_space_str);
   }
 

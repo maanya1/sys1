@@ -2,6 +2,7 @@
 #include "heap.h"
 
 #include "free.h"
+#include <string.h>
 
 // remember to free "strdup". also cmd + f for all malloc and make sure that
 // they're covered.
@@ -10,12 +11,14 @@
 
 void Free_tokens_list(Token* head) {
   if (head == NULL) return;
-
   Token* next = head->next;
 
-  free(head->token);
+  if (strlen(head->token) != 0) {
+    free(head->token);
+  }
   free(head);
 
+  printf("next: %p\n", next);
   Free_tokens_list(next);
 }
 
@@ -25,8 +28,14 @@ void Free_binary_tree(TreeNode* root) {
     TreeNode* left_node = root->left;
     TreeNode* right_node = root->right;
 
-    free(root->word);
-    free(root->code);
+    if (strlen(root->word) > 0) {
+      free(root->word);
+    }
+
+    if (strlen(root->code) > 0) {
+        free(root->code);
+    }
+  
     free(root);
 
     Free_binary_tree(left_node);

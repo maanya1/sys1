@@ -5,6 +5,7 @@
 #include "src/huffman.h"
 #include "src/heap.h"
 #include "src/recursive.h"
+#include "src/free.h"
 
 void build_codebook(Flags* flags) {
   Token* head = Token_create(NULL);
@@ -15,16 +16,16 @@ void build_codebook(Flags* flags) {
     build_codebook_helper(flags->file_path, head);
   }
 
-
-
   Token* tokens = head->next;
   Token_print(tokens);
-  free(head);
 
   if (tokens != NULL) {
     TreeNode* huff = Huffman_from_list(tokens);
     printCodes("./HuffmanCodes", huff);
+    Free_binary_tree(huff);
   }
+
+  Free_tokens_list(head);
 }
 
 void build_codebook_helper(char* pathname, void* data) {

@@ -7,6 +7,7 @@
 
 #include "heap.h"
 #include "tokens.h"
+#include "free.h"
 
 TreeNode* Huffman_from_list(Token* list) {
   if (list == NULL) {
@@ -16,11 +17,10 @@ TreeNode* Huffman_from_list(Token* list) {
   Heap* new_heap = CreateHeap(5);
 
   while (list != NULL) {
-    Token* next = list->next;
-    list->next = NULL;
-
-    new_heap = insert(new_heap, list);
-    list = next;
+    Token* node = Token_create_frequency(list->token, list->frequency);
+    new_heap = insert(new_heap, node);
+    Free_tokens_list(node);
+    list = list->next;;
   }
 
   printHeap(new_heap);
@@ -36,7 +36,10 @@ TreeNode* Huffman_from_list(Token* list) {
     new_heap = insert_tree_node(new_heap, new);
   }
 
-  return new_heap->arr[0];
+  TreeNode* items = new_heap->arr[0];
+  free(new_heap->arr);
+  free(new_heap);
+  return items;
 }
 
 void printCodes(char* path, TreeNode* treeNode) {
@@ -71,8 +74,7 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
 
     // printf("%s", out_string);
     write(fd, out_string, strlen(out_string));
-
-    //free(out_string);
+    free(out_string);
 
     return;
   }
@@ -85,7 +87,7 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcat(new_string, "0");
 
     printCodesHelper(fd, treeNode->left, new_string);
-    //free(new_string);
+    free(new_string);
   }
 
   if (treeNode->right != NULL) {
@@ -97,12 +99,8 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcat(new_string, "1");
 
     printCodesHelper(fd, treeNode->right, new_string);
-    //free(new_string);
+    free(new_string);
   }
-
-  // if (strlen(prefix) != 0) {
-  //   free(prefix);
-  // }
 }
 
 TreeNode* Huffman_insert(TreeNode* huff, char* prefix, char* word) {
@@ -129,18 +127,21 @@ TreeNode* Huffman_from_codebook(char* codebook_path) {
   Token* tokens = Token_read_file(codebook_path);
   TreeNode* huff = NULL;
 
-  while (tokens != NULL) {
-    char* encoding = tokens->token;
+  Token* ptr = tokens;
+  while (ptr != NULL) {
+    char* encoding = ptr->token;
     // skip tab
-    tokens = tokens->next->next;
+    ptr = ptr->next->next;
 
-    char* word = tokens->token;
+    char* word = ptr->token;
 
     // skip new line
-    tokens = tokens->next->next;
+    ptr = ptr->next->next;
 
     huff = Huffman_insert(huff, encoding, word);
   }
+
+  Free_tokens_list(tokens);
 
   return huff;
 }
