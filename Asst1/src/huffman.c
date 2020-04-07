@@ -23,8 +23,6 @@ TreeNode* Huffman_from_list(Token* list) {
     list = list->next;
   }
 
-  printHeap(new_heap);
-
   while (!isSizeOne(new_heap)) {
     TreeNode* temp1 = removeMin(new_heap);
     TreeNode* temp2 = removeMin(new_heap);
@@ -72,7 +70,6 @@ void printCodesHelper(int fd, TreeNode* treeNode, char* prefix) {
     strcat(out_string, treeNode->word);
     strcat(out_string, "\n");
 
-    // printf("%s", out_string);
     write(fd, out_string, strlen(out_string));
     free(out_string);
 

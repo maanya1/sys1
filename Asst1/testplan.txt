@@ -1,30 +1,14 @@
-Different file inputs
-- empty file
-  - Build Codebook
-  - Compress
-  - Decompress
+Our testing cases were...
 
--file with 1 word
-  - Build Codebook
-  - Compress
-  - Decompress
-
--file with multiple words repeating multiple times
--file with 1 word repeating multiple times and every other word
-- recursive etc.
-
-Later:
-- Overwriting files
-
-Different inputs to the terminal
-
-sam
--the input should be ./fileCompressor <flag> <path or file> |codebook|
--inputting too many flags
--inputting not enough flags
--inputting flags in the wrong order
-
-maanya
--inputting flags that do not exist (anything other than -b, -c, -d, or -R)
--no mixing flags, (ex. must be -R -b, not -Rb)
--giving an invalid pathname or filename
+1. Empty File
+2. File with 1 word
+3. File with multiple words repeating multiple times
+4. File with 1 word repeating multiple times and every other word
+5. Recursive directories with 1 - 4
+6. Overwriting files
+7. Inputting too many flags
+8. Not inputting enough flags
+9. Inputting flags in the wrong order
+10. Inputting flags that do not exist (anything other than `-b`, `-c`, `-d`, or `-R`)
+11. Mixing flags, (ex. must be `-R -b`, not `-Rb`)
+12. Giving an invalid pathname or filename

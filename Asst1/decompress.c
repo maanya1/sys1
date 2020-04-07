@@ -17,6 +17,11 @@
 void decompress(Flags* flags) {
   TreeNode* huff = Huffman_from_codebook(flags->codebook_path);
 
+  if (huff == NULL) {
+    Warning_print_warning("Codebook was empty.");
+    return;
+  }
+
   if (flags->recursive) {
     listFilesRecursive(flags->file_path, decompress_helper, huff);
   } else {
